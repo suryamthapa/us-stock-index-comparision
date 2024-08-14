@@ -5,6 +5,11 @@ Available indexes for comparision are:
 - NASDAQ
 - FTSE 100
 
+Screenshots
+![image](https://github.com/user-attachments/assets/9d1ec138-bd1c-4ef0-83ca-d814a93a2ed9)
+
+![image](https://github.com/user-attachments/assets/3cf301b8-8b66-4b28-b661-4a80708a153e)
+
 To scrape and save the data.
 ```bash
 $ python scrape.py
