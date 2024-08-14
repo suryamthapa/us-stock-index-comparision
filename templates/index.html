@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stock Comparison</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      .date-fields {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      input[type="date"] {
+        width: calc(50% - 11px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #e9f5e9;
+        color: #333;
+      }
+      .error {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Stock Comparison</h1>
+      <form id="compareForm">
+        <div class="date-fields">
+          <label for="start_date">Start Date:</label>
+          <input type="date" id="start_date" required />
+
+          <label for="end_date">End Date:</label>
+          <input type="date" id="end_date" required />
+        </div>
+
+        <button type="submit">Compare Stocks</button>
+      </form>
+
+      <div id="output" class="result" style="display: none"></div>
+      <div id="error" class="error" style="display: none"></div>
+      <table id="comparisonTable" style="display: none">
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>Mean</th>
+            <th>Variance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="snp500Row">
+            <td>S&P 500</td>
+            <td id="snp500Mean"></td>
+            <td id="snp500Variance"></td>
+          </tr>
+          <tr id="nasdaqRow">
+            <td>NASDAQ</td>
+            <td id="nasdaqMean"></td>
+            <td id="nasdaqVariance"></td>
+          </tr>
+          <tr id="ftse100Row">
+            <td>FTSE 100</td>
+            <td id="ftse100Mean"></td>
+            <td id="ftse100Variance"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      document
+        .getElementById("compareForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const startDate = document.getElementById("start_date").value;
+          const endDate = document.getElementById("end_date").value;
+          const url = `http://127.0.0.1:8080/compare-stocks?start_date=${startDate}&end_date=${endDate}`;
+
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.message) {
+                document.getElementById("output").style.display = "none";
+                document.getElementById("error").style.display = "block";
+                document.getElementById(
+                  "error"
+                ).innerText = `Error: ${data.message}`;
+              } else {
+                document.getElementById("error").style.display = "none";
+                document.getElementById("output").style.display = "none";
+                document.getElementById("comparisonTable").style.display =
+                  "table";
+                document.getElementById("snp500Mean").innerText =
+                  data.SNP500_mean;
+                document.getElementById("snp500Variance").innerText =
+                  data.SNP500_variance;
+                document.getElementById("nasdaqMean").innerText =
+                  data.NASDAQ_mean;
+                document.getElementById("nasdaqVariance").innerText =
+                  data.NASDAQ_variance;
+                document.getElementById("ftse100Mean").innerText =
+                  data.FTSE100_mean;
+                document.getElementById("ftse100Variance").innerText =
+                  data.FTSE100_variance;
+              }
+            })
+            .catch((error) => {
+              document.getElementById("output").style.display = "none";
+              document.getElementById("error").style.display = "block";
+              document.getElementById("error").innerText = `Error: ${error}`;
+            });
+        });
+    </script>
+  </body>
+</html>
